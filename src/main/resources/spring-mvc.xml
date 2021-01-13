@@ -15,14 +15,16 @@
    http://www.springframework.org/schema/mvc
    http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-<!--  url 정보와 controller를 매핑-->
+<!--  url 정보와 controller를 매핑 : -->
    <bean class=
 "org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping" />
-                   
+
+<!-- controller,logic,dao 패키지에 속한 클래스 중 @Component 어노테이션을 가진
+    클래스를 객체화 -->                   
    <context:component-scan base-package="controller,logic,dao" />
+<!-- web 환경에서 사용되는 어노테이션 설정 -->   
    <mvc:annotation-driven />
-   <aop:aspectj-autoproxy />
-   	
+<!--    <aop:aspectj-autoproxy />  -->   	
    <!-- view 결정자.  -->        
    <bean id="viewResolver"
      class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -31,16 +33,24 @@
      </property>
      <property name="prefix"><value>/WEB-INF/view/</value></property>
      <property name="suffix"><value>.jsp</value></property>
-   </bean>
-   
+   </bean>   
   <bean id="messageSource" 
        class="org.springframework.context.support.ResourceBundleMessageSource">
      <property name="basenames"><list>
      <value>messages</value></list></property>
   </bean> 
   <!-- 예외처리 부분 -->
-  <bean id="exceptionHandler" 
-  class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
-     <property name="exceptionMappings"></property>
-  </bean>  
+  <bean id="exceptionHandler"  class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+     <property name="exceptionMappings">
+     <value>exception.CartEmptyException=exception
+     </value></property>
+  </bean> 
+  
+  <!-- 파일 업로드 관련 설정 : enc-type="muiltipart/form-data" 형식인 경우 자동 실행 
+  p:maxUploadSize : 최대 업로드 바이트 지정
+  p:maxInMemorySize : 메모리에 저장하는 크기 지정 (바이트단위)-->
+  <bean id="multipartResolver" 
+  class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+  p:maxUploadSize="104854600" p:maxInMemorySize="10485760">
+  </bean>
 </beans>
