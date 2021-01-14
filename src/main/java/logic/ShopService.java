@@ -1,6 +1,7 @@
 package logic;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,11 +12,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import dao.ItemDao;
+import dao.UserDao;
 
 @Service   //@Component + Service 기능. : Controller와 Dao의 중간 연결 역할
 public class ShopService {
 	@Autowired
 	private ItemDao itemDao;
+	@Autowired
+	private UserDao userDao;
 	
 	public List<Item> getItemList() {
 		return itemDao.list();
@@ -59,6 +63,18 @@ public class ShopService {
 	public void itemDelete(Integer id) {
 		itemDao.delete(id);
 		
+	}
+	public void insert(User user) {
+		userDao.insert(user);
+	}
+	public User selectUserOne(String userid) {		
+		return userDao.selectUserOne(userid);
+	}
+	public List<Sale> salelist(String id) {
+		return new ArrayList<Sale>();
+	}
+	public List<SaleItem> saleItemList(int saleid) {
+		return new ArrayList<SaleItem>();
 	}
 }
     

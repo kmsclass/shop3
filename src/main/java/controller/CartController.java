@@ -52,6 +52,8 @@ public class CartController {
 		Cart cart = (Cart)session.getAttribute("CART");
 		
 		if(cart == null || cart.getItemSetList().size() == 0) {
+			//throw : 예외 발생
+			//throws : 예외 내보내기. 예외처리
 			throw new CartEmptyException
 			("장바구니에 상품이 없습니다.","../item/list.shop");
 		}
