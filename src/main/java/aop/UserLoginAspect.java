@@ -32,14 +32,14 @@ public class UserLoginAspect {
 		}
 		return joinPoint.proceed();
 	}
-	@Around("execution(* *.UserController.idCheck*(..)) && args(id,session)")
+	@Around("execution(* *.UserController.idCheck*(..)) && args(id,session,..)")
 	public Object useridCheck(ProceedingJoinPoint joinPoint, 
 			                  String id, HttpSession session) throws Throwable{
 		User loginUser = (User)session.getAttribute("loginUser");
 		if(loginUser == null) {
 			throw new LoginException("로그인하세요", "login.shop");
 		}else if(!loginUser.getUserid().equals("admin") && !id.equals(loginUser.getUserid())) {
-			throw new LoginException("본인 정보만 조회 가능합니다.","main.shop");
+			throw new LoginException("본인 정보만 거래 가능합니다.","main.shop");
 		}
 		return joinPoint.proceed();
 	}

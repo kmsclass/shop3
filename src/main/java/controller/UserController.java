@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -15,9 +16,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import exception.LoginException;
 import logic.Item;
 import logic.Sale;
 import logic.SaleItem;
@@ -131,7 +135,7 @@ public class UserController {
 		return mav;
 	}
 	
-	@GetMapping("update")
+	@GetMapping({"update","delete"})
 	public ModelAndView idCheckupdate(String id, HttpSession session) {
 		ModelAndView mav = new ModelAndView();
 		User user = service.selectUserOne(id);
@@ -140,7 +144,7 @@ public class UserController {
 	}
 	
 	@PostMapping("update")
-	public ModelAndView update(@Valid User user, BindingResult bindResult) {
+	public ModelAndView update(@Valid User user, BindingResult bindResult, HttpSession session) {
 		ModelAndView mav = new ModelAndView();
 		if(bindResult.hasErrors()) {
 			mav.getModel().putAll(bindResult.getModel());
@@ -152,9 +156,53 @@ public class UserController {
 		//비밀번호가 일치하면 user 정보로 db 수정.
 		// 일치하지 않으면 : error.login.password 코드를 입력하여 update.jsp 페이지에
 		//                글로벌 오류 메시지 출력. 
-		
+		try {
+			User loginUser=(User)session.getAttribute("loginUser");
+			if(user.getPassword().equals(loginUser.getPassword())) {
+				service.updateUser(user);
+				mav.setViewName("redirect:/user/mypage.shop?id="+user.getUserid());
+				if(user.getUserid().equals(loginUser.getUserid())) {
+					//session 정보 수정
+					session.setAttribute("loginUser", user);
+				}
+			}else {
+				bindResult.reject("error.login.password");
+				mav.getModel().putAll(bindResult.getModel());
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 		return mav;
 	}
-	
+	@PostMapping("delete")
+	public ModelAndView idCheckdelete
+	      (String userid, HttpSession session,String password ) {
+		ModelAndView mav = new ModelAndView();
+		User loginUser = (User)session.getAttribute("loginUser");
+		if(userid.equals("admin")) {
+			throw new LoginException("관리자 탈퇴는 불가합니다.","main.shop");
+		}
+		if(!password.equals(loginUser.getPassword())) {
+			throw new LoginException
+			("탈퇴시 비밀번호가 틀립니다.","delete.shop?id="+ userid);
+		}
+		try {
+			service.userDelete(userid);
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw new LoginException
+			("탈퇴시 오류가 발생했습니다.","delete.shop?id="+ userid);
+		}
+		//탈퇴 이후
+		if(loginUser.getUserid().equals("admin")) {
+			mav.setViewName("redirect:/admin/list.shop");
+		} else {
+//			mav.setViewName("redirect:logout.shop");
+			session.invalidate();
+			throw new LoginException
+			(userid+"회원님의 탈퇴 처리가 되었습니다.","login.shop");
+		}
+		return mav;
+	}
 }
 

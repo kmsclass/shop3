@@ -17,6 +17,9 @@
 <tr height="40px"><td>비밀번호</td><td><form:password path="password" />
 <font color="red"><form:errors path="password" /></font></td></tr>
 <tr height="40px"><td colspan="2" align="center">
-<input type="submit" value="로그인"><input type="button" value="회원가입" 
-   onclick="location.href='userEntry.shop'"></td></tr></table>
+<input type="submit" value="로그인">
+<input type="button" value="회원가입"  onclick="location.href='userEntry.shop'">
+<input type="button" value="아이디찾기" onclick="win_open('idsearch')">
+<input type="button" value="비밀번호찾기" onclick="win_open('pwsearch')">
+   </td></tr></table>
 </form:form></body></html>

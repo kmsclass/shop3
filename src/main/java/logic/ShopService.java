@@ -76,5 +76,18 @@ public class ShopService {
 	public List<SaleItem> saleItemList(int saleid) {
 		return new ArrayList<SaleItem>();
 	}
+	public void updateUser(User user) {
+		userDao.update(user);
+	}
+	public void userDelete(String userid) {
+		userDao.delete(userid);
+	}
+	public List<User> getUserList() {
+		return userDao.list();
+	}
+	public List<User> getUserList(String[] idchks) {
+		return userDao.list(idchks);
+	}
+	
 }
     
