@@ -86,6 +86,7 @@
          value="${user.birthday}" pattern="yyyy-MM-dd" /></td></tr>
        </table><br>
     <a href="update.shop?id=${user.userid}">[회원정보수정]</a>&nbsp;
+    <a href="password.shop">[비밀번호수정]</a>&nbsp;
        <c:if test="${loginUser.userid != 'admin'}">
         <a href="delete.shop?id=${user.userid}">[회원탈퇴]</a>&nbsp;
        </c:if>

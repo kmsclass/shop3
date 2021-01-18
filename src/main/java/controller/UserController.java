@@ -2,7 +2,9 @@
 package controller;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,7 +47,7 @@ public class UserController {
 		model.addAttribute(new User());
 		return null;
 	}
-	@RequestMapping("main") //login되어야 하는 메서드이름을 loginCheckXXX로 지정
+	@RequestMapping({"main","password"}) //login되어야 하는 메서드이름을 loginCheckXXX로 지정
 	public String loginCheckmain(HttpSession session) {
 		return null;
 	}
@@ -204,5 +207,74 @@ public class UserController {
 		}
 		return mav;
 	}
+	//@RequestMapping과 PostMapping이 같이 설정된 경우 Post방식 요청인 경우 이 메서드 호출
+	//@RequestParam : 요청 파라미터 값을 저장하기 위한 객체 설정
+	// 요청 파라미터 : 1. 파라미터 이름과 매개변수 이름이 같은 경우
+	//              2. Bean 클래스의 프로퍼티와 파라미터가 같은 경우 Bean클래스의 객체에 저장
+	//              3. Map객체를 이용하여 파라미터 저장
+	@PostMapping("password")
+	public ModelAndView loginCheckpassword
+				(@RequestParam Map<String,String> param,HttpSession session) {
+		ModelAndView mav = new ModelAndView();
+		System.out.println(param);
+		User loginUser= (User)session.getAttribute("loginUser");
+		if(param.get("password").equals(loginUser.getPassword())) {
+		  try {
+		     service.userPasswordUpdate
+		             (loginUser.getUserid(),param.get("chgpass"));
+		     loginUser.setPassword(param.get("chgpass"));
+		     mav.addObject("message",loginUser.getUsername()+"님 비밀번호 변경완료");
+		     mav.addObject("url", "main.shop");
+		     mav.setViewName("alert");
+		  } catch(Exception e) {
+			  throw new LoginException
+			             ("비밀번호 변경시 오류가 있습니다.","password.shop");
+		  }		  
+		} else {
+		  throw new LoginException("현재 비밀번호가 틀립니다.","password.shop");
+		}
+		return mav;		
+	}
+	//{url}search : {url} : 지정되지 않음. *search인 요청 url인 경우 호출되는 메서드
+	//@PathVariable : {url}에 해당되는 문자열 매개변수 전달.
+	@PostMapping("{url}search")
+	public ModelAndView search (User user, BindingResult bresult,
+			                                   @PathVariable String url) {
+		ModelAndView mav = new ModelAndView();
+		String code = "error.userid.search"; //messages.properties 설정해야함.
+		String title = "아이디";
+		if(url.equals("pw")) {
+			code = "error.password.search";
+			title = "비밀번호";
+			if(user.getUserid()==null || user.getUserid().equals("")) {
+				bresult.rejectValue("userid", "error.required");
+			}
+		}
+		if(user.getEmail()==null || user.getEmail().equals("")) {
+			bresult.rejectValue("email", "error.required");
+		}
+		if(user.getPhoneno()==null || user.getPhoneno().equals("")) {
+			bresult.rejectValue("phoneno", "error.required");
+		}
+		if(bresult.hasErrors()) {
+			mav.getModel().putAll(bresult.getModel());
+			return mav;
+		}
+		
+		if(user.getUserid() != null && user.getUserid().equals(""))	
+           user.setUserid(null);
+		String result = null;
+		try {
+		    result = service.getSearch(user);
+		} catch (EmptyResultDataAccessException e) {
+			bresult.reject(code);
+			mav.getModel().putAll(bresult.getModel());
+			return mav;
+		}
+		mav.addObject("result",result);
+		mav.addObject("title",title);
+		mav.setViewName("search");
+		return mav;
+	}	
 }
 

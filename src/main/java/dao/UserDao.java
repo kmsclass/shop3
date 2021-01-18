@@ -67,5 +67,30 @@ public class UserDao {
 			ids += "'" + idchks[i] + ((i==idchks.length-1)?"'":"',");
 		}
 		String sql="select * from useraccount where userid in ("+ ids + ")";
-		return template.query(sql,mapper);	}
+		return template.query(sql,mapper);
+	}
+
+	public String search(User user) {
+		String sql =null;
+		if(user.getUserid() == null) //idsearch 인경우
+		    sql ="select concat(substr(userid,1,char_length(userid)-2),'**')"
+	    		+ " from useraccount "
+	    		+ "where email=:email and phoneno=:phoneno"; 
+		else //pwsearch 인경우
+		    sql ="select concat('**',substr(password,3,char_length(password)-2))"
+    		+ " from useraccount "
+    		+ " where userid=:userid and email=:email and phoneno=:phoneno"; 
+		System.out.println(sql);
+		SqlParameterSource param = new BeanPropertySqlParameterSource(user);
+		return template.queryForObject(sql, param,String.class);
+	}
+	
+	public void passwordUpdate(String userid, String pass) {
+		param.clear();
+		param.put("userid", userid);
+		param.put("password", pass);
+		String sql = "update useraccount set password=:password "
+				+ " where userid=:userid";
+		template.update(sql, param);
+	}
 }

@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 import exception.LoginException;
 import logic.User;
 
-@Component
-@Aspect
-@Order(1)
+//@Component
+//@Aspect
+//@Order(1)
 public class AdminLoginAspect {
 	@Around("execution(* controller.Admin*.*(..)) && args(..,session)")
 	public Object adminLoginCheck(ProceedingJoinPoint joinPoint

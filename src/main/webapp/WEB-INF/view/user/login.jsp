@@ -2,9 +2,16 @@
 <%-- /WEB-INF/view/user/login.jsp --%>
 <%@ include file="/WEB-INF/view/jspHeader.jsp" %> 
 <!DOCTYPE html><html><head><meta charset="UTF-8">
-<title>로그인화면</title></head><body>
+<title>로그인화면</title>
+<script type="text/javascript">
+function win_open(page) {
+	   var op = "width=500, height=350, left=50,top=150";
+	   open(page+".shop","",op);
+}
+</script>
+</head><body>
 <h2>사용자 로그인</h2>
-<form:form modelAttribute="user" method="post" action="login.shop">
+<form:form modelAttribute="user" method="post" action="login.shop" name="loginform">
 <input type="hidden" name="username" value="유효성검증을위한 파라미터" >
 <input type="hidden" name="email" value="valid@aaa.bbb" >
   <spring:hasBindErrors name="user">

@@ -4,5 +4,8 @@
    <decorator name="main" page="layout.jsp">
       <pattern>*.shop</pattern>
    </decorator>
-   <excludes></excludes>
+   <excludes>
+      <pattern>/user/idsearch*</pattern>
+      <pattern>/user/pwsearch*</pattern>
+   </excludes>
 </decorators>

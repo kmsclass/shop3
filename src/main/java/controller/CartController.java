@@ -61,5 +61,11 @@ public class CartController {
 		mav.addObject("cart",cart);
 		return mav;
 	}
-	
+	/*
+	 * 
+	 */
+	@RequestMapping("checkout") 
+    public String checkout(HttpSession session) {
+		return null;
+	}	
 }

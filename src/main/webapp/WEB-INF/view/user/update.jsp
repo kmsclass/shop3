@@ -33,6 +33,6 @@
     <tr><td>생년월일</td><td><form:input path="birthday" />
       <font color="red"><form:errors path="birthday" /></font></td></tr>
     <tr><td colspan="2" align="center">
-       <input type="submit" value="수정">
+       <input type="submit" value="수정"> 
        <input type="reset" value="초기화"></td></tr>
   </table></form:form></body></html>
