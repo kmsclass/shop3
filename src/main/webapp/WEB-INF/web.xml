@@ -19,6 +19,7 @@
 	  classpath:spring-db.xml
 	  </param-value>
 	</init-param>
+	<load-on-startup>1</load-on-startup>
   </servlet>
   <!-- url과 서블릿을 연동하기 위한 설정 -->
   <servlet-mapping>

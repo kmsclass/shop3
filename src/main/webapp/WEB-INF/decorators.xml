@@ -7,5 +7,6 @@
    <excludes>
       <pattern>/user/idsearch*</pattern>
       <pattern>/user/pwsearch*</pattern>
+      <pattern>/board/imgupload*</pattern>
    </excludes>
 </decorators>

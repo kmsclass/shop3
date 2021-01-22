@@ -11,7 +11,9 @@ import exception.CartEmptyException;
 import logic.Cart;
 import logic.Item;
 import logic.ItemSet;
+import logic.Sale;
 import logic.ShopService;
+import logic.User;
 
 @Controller
 @RequestMapping("cart")
@@ -67,5 +69,23 @@ public class CartController {
 	@RequestMapping("checkout") 
     public String checkout(HttpSession session) {
 		return null;
+	}
+	/*
+	 * 주문 확정 : 로그인 상태,장바구니에 상품 존재해야함 => aop 이용
+	 *   1. 장바구니 상품을 saleitem 테이블에 저장.
+	 *   2. 로그인 정보로 주문정보(sale) 테이블에 저장.
+	 *   3. 장바구니 상품 제거
+	 */
+	@RequestMapping("end")
+	public ModelAndView checkend (HttpSession session) {
+		ModelAndView mav = new ModelAndView();
+		Cart cart = (Cart)session.getAttribute("CART");
+		User loginUser = (User)session.getAttribute("loginUser");
+		Sale sale = service.checkend(loginUser,cart);
+		long total = cart.getTotal(); //장바구니상품의 총금액합계 
+		session.removeAttribute("CART"); //3. 장바구니 상품 제거
+		mav.addObject("sale",sale);
+		mav.addObject("total",total);
+		return mav;
 	}	
 }

@@ -10,7 +10,7 @@ public class SaleItem {
 	public SaleItem(int saleid, int seq, ItemSet itemSet) {
 		this.saleid = saleid;
 		this.seq = seq;
-		this.item = itemSet.getItem();
+		this.item = itemSet.getItem(); //주문상품객체
 		this.itemid = item.getId();
 		this.quantity = itemSet.getQuantity();		
 	}
